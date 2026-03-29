@@ -1,0 +1,46 @@
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: fastapi_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: fastapi_crud
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: fastapi_backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      # Use docker DNS name 'db' to connect to the database container
+      DB_URL: mysql+pymysql://root:password@db:3306/fastapi_crud
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: react_frontend
+    volumes:
+      - ./frontend:/app
+      # Prevents the local node_modules from overriding the container's node_modules
+      - /app/node_modules 
+    ports:
+      - "5173:5173"
+    environment:
+      # Ensures hot reloading works properly for Vite under Docker on Windows
+      - CHOKIDAR_USEPOLLING=true
+
+volumes:
+  mysql_data:
