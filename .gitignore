@@ -34,3 +34,7 @@ docker-compose.override.yml
 *.swo
 .DS_Store
 Thumbs.db
+
+exp.md
+explaination.md
+walkthrough1
