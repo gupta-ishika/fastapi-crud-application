@@ -2,7 +2,9 @@ fastapi
 uvicorn[standard]
 sqlalchemy
 pymysql
-python-dotenv
-passlib[bcrypt]
+pydantic
 python-jose[cryptography]
+bcrypt==4.0.1
+cryptography
+python-dotenv
 python-multipart
